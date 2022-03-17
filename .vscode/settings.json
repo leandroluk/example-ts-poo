@@ -1,0 +1,22 @@
+{
+  // editor
+  "editor.formatOnPaste": true,
+  "editor.formatOnSave": true,
+  "editor.formatOnSaveMode": "file",
+  "editor.formatOnType": true,
+  "editor.detectIndentation": false,
+  "editor.tabSize": 2,
+  "editor.insertSpaces": true,
+  "editor.codeActionsOnSave": {
+    "source.fixAll": true,
+    "source.organizeImports": true
+  },
+  // typescript
+  "typescript.suggestionActions.enabled": false,
+  // javascript
+  "javascript.suggestionActions.enabled": false,
+  // files
+  "files.eol": "\n",
+  // barrelr
+  "barrelr.lineEnding": "LF"
+}
