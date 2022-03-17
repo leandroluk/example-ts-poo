@@ -5,16 +5,19 @@ import {
   RowDataPacket
 } from 'mysql2/promise';
 import {
-  AddUser,
-  EditUser,
+  DAO,
   Entity,
-  GenericCrudDAO,
-  User,
-  UserWithoutPassword
+  User
 } from "../domain";
 
 
-export class MySQLUserDAO implements GenericCrudDAO<User, AddUser, EditUser, UserWithoutPassword>{
+export class MySQLUserDAO implements
+  DAO.Get<User, User.WithoutPassword>,
+  DAO.Add<User.Add>,
+  DAO.Edit<User, User.Edit>,
+  DAO.Delete<User>,
+  DAO.List<User.WithoutPassword>
+{
   static TABLE = 'example-ts-poo.Users'
   static FIELDS = [
     'displayName',
@@ -27,17 +30,17 @@ export class MySQLUserDAO implements GenericCrudDAO<User, AddUser, EditUser, Use
     readonly db: Pool | Connection
   ) { }
 
-  async get(id: number): Promise<UserWithoutPassword> {
+  async get(id: number): Promise<User.WithoutPassword> {
     const sql = `
       SELECT id, createdAt, updatedAt, ${MySQLUserDAO.FIELDS.join(', ')} 
       FROM ${MySQLUserDAO.TABLE} 
       WHERE id = ?;
     `
     const [[result]] = await this.db.query<RowDataPacket[]>(sql, [id])
-    return result as UserWithoutPassword
+    return result as User.WithoutPassword
   }
 
-  async add(data: AddUser): Promise<Entity['id']> {
+  async add(data: User.Add): Promise<Entity['id']> {
     const sql = `
       INSERT INTO ${MySQLUserDAO.TABLE} (
         createdAt, ${MySQLUserDAO.FIELDS.join(', ')} 
@@ -54,7 +57,7 @@ export class MySQLUserDAO implements GenericCrudDAO<User, AddUser, EditUser, Use
     return insertId
   }
 
-  async edit(id: number, changes: EditUser): Promise<void> {
+  async edit(id: number, changes: User.Edit): Promise<void> {
     const keys = [...Object.keys(changes), 'updatedAt']
     const values = [...Object.values(changes), new Date(), id]
     const sql = `
@@ -73,12 +76,12 @@ export class MySQLUserDAO implements GenericCrudDAO<User, AddUser, EditUser, Use
     await this.db.query(sql, [id])
   }
 
-  async list(): Promise<UserWithoutPassword[]> {
+  async list(): Promise<User.WithoutPassword[]> {
     const sql = `
       SELECT id, createdAt, updatedAt, ${MySQLUserDAO.FIELDS.join(', ')} 
       FROM ${MySQLUserDAO.TABLE}
     `
     const [result] = await this.db.query<RowDataPacket[]>(sql)
-    return result as UserWithoutPassword[]
+    return result as User.WithoutPassword[]
   }
 }

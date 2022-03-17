@@ -11,14 +11,30 @@ export type User = Entity & {
   password: string
   photoURL?: string
 }
-export type UserWithoutPassword = Omit<User, 'password'>
-export type AddUser = Omit<User, keyof Entity>
-export type EditUser = Partial<Omit<User, keyof Entity>>
+export namespace User {
+  export type WithoutPassword = Omit<User, 'password'>
+  export type Add = Omit<User, keyof Entity>
+  export type Edit = Partial<Omit<User, keyof Entity>>
+}
 
-export interface GenericCrudDAO<Type extends Entity, AddType = Omit<Type, keyof Entity>, EditType = Partial<Omit<Type, keyof Entity>>, ReturnType = Type> {
-  get(id: Type['id']): Promise<ReturnType>
-  add(data: AddType): Promise<Entity['id']>
-  edit(id: Type['id'], changes: EditType): Promise<void>
-  delete(id: Type['id']): Promise<void>
-  list(): Promise<ReturnType[]>
+export namespace DAO {
+  export interface Get<Type extends Indexable, ReturnType> {
+    get(id: Type['id']): Promise<ReturnType>
+  }
+
+  export interface Add<AddType> {
+    add(data: AddType): Promise<Indexable['id']>
+  }
+
+  export interface Edit<Type extends Indexable, ChangesType> {
+    edit(id: Type['id'], changes: ChangesType): Promise<void>
+  }
+
+  export interface Delete<Type extends Indexable> {
+    delete(id: Type['id']): Promise<void>
+  }
+
+  export interface List<ReturnType> {
+    list(): Promise<ReturnType[]>
+  }
 }
